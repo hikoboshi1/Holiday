@@ -15,19 +15,22 @@ class CreateHolidayApplicationsTable extends Migration
     {
         Schema::create('holiday_applications', function (Blueprint $table) {
             $table->bigIncrements('id')->length(5);
-            $table->unsignedInteger('user_id')->length(5);
-            $table->foreign('user_id')->references('id')->on('users');
-            $table->dateTime('submit_date');
+            $table->unsignedInteger('employee_id')->length(5);
+            $table->foreign('employee_id')->references('id')->on('users');
+            $table->dateTime('submit_datetime');
             $table->unsignedInteger('holiday_type_id')->length(2);
             $table->foreign('holiday_type_id')->references('id')->on('holiday_types');
             $table->date('holiday_date_from');
             $table->date('holiday_date_to')->nullable();
+            $table->double('total_days')->length(2);
             $table->time('holiday_time_from')->nullable();
             $table->time('holiday_time_to')->nullable();
             $table->string('reason',255);
             $table->string('remarks',255)->nullable();
+            $table->unsignedInteger('application_status_id')->length(2);
+            $table->foreign('application_status_id')->references('id')->on('application_statuses');
             $table->timestamps();
-            $table->unique(['user_id', 'holiday_date_from'], 'unique_user_id_holiday_date_from');
+            $table->unique(['employee_id', 'holiday_date_from'], 'unique_employee_id_holiday_date_from');
         });
     }
 

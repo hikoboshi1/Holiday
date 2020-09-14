@@ -11,7 +11,7 @@
             <div class="image">
             </div>
             <div class="info">
-                <a href="{{ url('/home') }}" class="d-block">{{ Auth::user()->name }}</a>
+                <a href="{{ url('/home') }}" class="d-block">{{ Auth::user()->user_name }}</a>
             </div>
         </div>
 
@@ -33,6 +33,28 @@
                                 <p> トップ </p>
                             </a>
                         </li>
+
+                        <li class="nav-item has-treeview menu-open">
+                            <a href="#" class="nav-link ml-2">
+                                <i class="fas fa-business-time fa-lg"></i>
+                                <p> 勤怠 <i class="right fas fa-angle-left"></i></p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="{{ route('holiday_index') }}" class="nav-link ml-4">
+                                        <i class="far fa-list-alt fa-lg"></i>
+                                        <p> 一覧 </p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('holiday_create') }}" class="nav-link ml-4">
+                                        <i class="fas fa-stopwatch fa-lg"></i>
+                                        <p> 打刻 </p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+
                         <li class="nav-item has-treeview menu-open">
                             <a href="#" class="nav-link ml-2">
                                 <i class="far fa-calendar-alt fa-lg"></i>
@@ -40,19 +62,20 @@
                             </a>
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
-                                    <a href="{{ url('/index') }}" class="nav-link ml-4">
+                                    <a href="{{ route('holiday_index') }}" class="nav-link ml-4">
                                         <i class="far fa-list-alt fa-lg"></i>
                                         <p> 一覧 </p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a href="{{ url('/new') }}" class="nav-link ml-4">
+                                    <a href="{{ route('holiday_create') }}" class="nav-link ml-4">
                                         <i class="fas fa-folder-plus fa-lg"></i>
                                         <p> 申請 </p>
                                     </a>
                                 </li>
                             </ul>
                         </li>
+                        
                         <li class="nav-item has-treeview menu-open">
                             <a href="#" class="nav-link ml-2">
                                 <i class="fas fa-file-invoice-dollar fa-lg"></i>

@@ -8,7 +8,7 @@ require('./bootstrap');
 var moment = require('moment')
 
 
-//time-pickerの値を受け取り差の時間を返す
+//timepickerの値を受け取り差の時間を返す
 const getBussinessHours = function (start, end) {
     if ((start != '') && (end != '') && (end > start)) {
         let startMoment = moment(start, "HH:mm");
@@ -19,7 +19,28 @@ const getBussinessHours = function (start, end) {
         return 'エラー';
     }
 }
+//timepicker変更時、時間を取得 関数
+const totalBusinessHours = () => {
+    if ($('#time_from').val() != "" && $('#time_to').val() != "") {
+        $('#time').val(getBussinessHours($('#time_from').val(), $('#time_to').val()))
+    }    
+}
 
+//Ajax通信で合計期間算出 関数
+const totalBusinessDays = () => {
+    if ($('#date_from').val() != '' && ($('#date_to').val() != '')) {
+        $.ajax({
+            url: 'dcfportal/get_holiday_duration',
+            type: 'get',
+            data: {
+                'date_from': $('#date_from').val(),
+                'date_to': $('#date_to').val()
+            }
+        }).done(data => $('#days').val(data));
+    }
+}
+
+//これを廃止し、Ajax通信へ移行
 //日付型の文字列を与え、土日を除いた日数を計算する
 const getBussinessDays = (start, end) => {
     let businessDays = 0;
@@ -38,59 +59,54 @@ const getBussinessDays = (start, end) => {
     return businessDays;
 }
 
-//活性・非活性判定
-const disabled = () => {     
+//種別:半休選択時 関数
+const dateAndTime = () => {     
     if ($('#types option:selected').data("code") == 'half') {　//option:selected data属性の選択
         $('#date_to').prop('disabled', true);
-        $('#date').prop('disabled', true);
-        $('#time_from').prop('disabled', false);
-        $('#time_to').prop('disabled', false);
+        $('#date_to').val(null);
+        $('#days').val(0.5);
+        $('.timepicker').prop('disabled', false);
         $('#time').prop('disabled', false);
+        totalBusinessHours();
+
     }
     else {
         $('#date_to').prop('disabled', false);
-        $('#date').prop('disabled', false);
-        $('#time_from').prop('disabled', true);
-        $('#time_to').prop('disabled', true);
+        $('#days').val(null);
+        $('.timepicker').prop('disabled', true);
+        $('.timepicker').val(null);
         $('#time').prop('disabled', true);
-    }
-}
-//種別の変更時、非活性の値をクリアする
-const clear = () => {
-    if ($('#types option:selected').data("code") == 'half') {
-        $('#date_to').val("");
-        $('#date').val("");
-    }
-    else if($('#types option:selected').data("code") != 'half'){
-        $('#time_from').val("");
-        $('#time_to').val("");
-        $('#time').val("");
-    }
-}
+        $('#time').val(null);
+        totalBusinessDays();
 
+    }
+}
+//画面遷移時
 $(document).ready(function () {
-    disabled();
+    dateAndTime();
 
-    var date_start_val = $('#date_start').val();
-        var date_end_val = $('#date_end').val();
-        if (date_start_val != '' && date_end_val != '') {
-            $('#dateSpan').val(getBussinessDays($('#date_start').val(), $('#date_end').val()));
-    };
-    var start = $('#time_start').val();
-        var end = $("#time_end").val();
-        if (start != "" && end != "") {
-            $('#timeSpan').val(getBussinessHours($('#time_start').val(), $('#time_end').val()));
-    };
+    //時間の取得
+    myTimePicker.initTime($('#time_from'), '09:00', '18:00', 15); 
+    myTimePicker.initTime($('#time_to'), '09:00', '18:00', 15);
+    
+    //時間のフォーマット
     $('#time_from').datepicker({
         format: 'H:i',
     });
     $('#time_to').datepicker({
         format:'H:i',
     });
+
+    //詳細:半休時、合計時間取得
+    if ($('#time_start').val() != '' && $('#time_end').val() != '') {
+        $('#time').val(totalBussinessHours($('#time_start').val(), $('#time_end').val()));
+    };
+    
 });
-$(function () {    
+$(function () {
+    //種別変更時
     $('#types').on('change', function () {      
-        disabled();
+        dateAndTime();
         clear();
     });
 
@@ -113,40 +129,39 @@ $(function () {
             }
         }        
     });
+    $('#submit_from').datepicker({
+        beforeShowDay: function (date) {
+            if (date.getDay() == 0 || date.getDay() == 6) {
+                return [false, 'ui-state-disabled'];
+            } else {
+                return [true, ''];
+            }
+        }
+    });
+    $('#submit_to').datepicker({
+        beforeShowDay: function (date) {
+            if (date.getDay() == 0 || date.getDay() == 6) {
+                return [false, 'ui-state-disabled'];
+            } else {
+                return [true, ''];
+            }
+        }
+    });
 
+    //Ajax通信に移行したら不要になる?
     //日数計算
-    $('#date_from').on('change', function () {  
-        var date_from_val = $('#date_from').val();
-        var date_to_val = $('#date_to').val();
-        if (date_from_val != '' && date_to_val != '') {
-            $('#date').val(getBussinessDays($('#date_from').val(), $('#date_to').val()));
+    $('#date_from').on('change', function () {
+        if ($('#date_from').val() != '' && $('#date_to').val() != '') {
+            $('#days').val(getBussinessDays($('#date_from').val(), $('#date_to').val()));
         }
-    });
-    $('#date_to').on('change', function () {
-        var date_from_val = $('#date_from').val();
-        var date_to_val = $('#date_to').val();
-        if (date_from_val != '' && date_to_val != '') {
-            $('#date').val(getBussinessDays($('#date_from').val(), $('#date_to').val()));
-        }
-    });
-
-    //時間の取得
-    myTimePicker.initTime($('#time_from'), '08:00', '24:00', 15); 
-    myTimePicker.initTime($('#time_to'), '08:00', '24:00', 15);
-    
-    //時間の計算
-    $('#time_from').on('change', function () {  
-        var start = $('#time_from').val();
-        var end = $("#time_to").val();
-        if (start != "" && end != "") {
-            $('#time').val(getBussinessHours($('#time_from').val(), $('#time_to').val()));
-        }        
     });   
-    $('#time_to').on('change', function () {
-        var start = $('#time_from').val();
-        var end = $("#time_to").val();
-        if (start != "" && end != "") {
-            $('#time').val(getBussinessHours($('#time_from').val(), $('#time_to').val()));
+    $('#date_to').on('change', function () {
+        if ($('#date_from').val() != '' && $('#date_to').val() != '') {
+            $('#days').val(getBussinessDays($('#date_from').val(), $('#date_to').val()));
         }
-    });
+    });    
+
+    
+    $('.calender').on('dp.change', function () { totalBusinessDays() });
+    $('.timepicker').on('change', function () { totalBusinessHours() });
 })

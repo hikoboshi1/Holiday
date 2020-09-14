@@ -1,31 +1,42 @@
 @extends('layouts.app')
 @section('content')
+<div class="container">
 <div class="section-header">
     <h3>休暇届：詳細</h3>
 </div>
-<div class="container">
+<div class="text-right">
+  <a href="{{ route('holiday_index') }}"><button class="btn btn-primary btn-fixedsize pull-right my-3" style="width:200px;">一覧へ戻る</button></a>
+</div>
   <div class="card">
     <div class="card-body">
     	<form>
         @csrf
-        <div class="row mt-2">
+        @can('admin')
+        <div class="row">
+          <label class="col-sm-1 text-right">氏名</label>
+          <input type="text" id="employee_name" name="employee_name" class="col-sm-3 form-control" value="{{ \App\Employees::IdToLastName($holidayData->employee_id) }}{{ \App\Employees::IdToFirstName($holidayData->employee_id) }}" readonly>
+        </div>
+        @endcan
+
+        <div class="row mt-4">
           <label class="col-sm-1 text-right">種別</label>                   
           <input type="text" id="holiday_type" name="holiday_type" class="col-sm-3 form-control" value="{{ $holidayData->holiday_type->holiday_type_name }}" readonly/>
           <label class="col-sm-1 text-right">提出日</label>                
-          <input type="text" id="submit_date"　name="submit_date" class="col-sm-3 form-control" value="{{ $holidayData->submit_date->format('Y/m/d') }}" readonly/>    
+          <input type="text" id="submit_datetime"　name="submit_datetime" class="col-sm-3 form-control" value="{{ $holidayData->submit_datetime->format('Y/m/d') }}" readonly/>    
         </div>
+
         <div class="row mt-4">      
           <label class="col-sm-1 text-right">期間</label>
           <input type="text" id="date_start" name="date_start" class="col-sm-3 form-control" value="{{ \App\HolidayApplication::parseDate($holidayData->holiday_date_from) }}" readonly/>
-          <label class="col-sm-1 text-center"><font size="+1">～</font></label>
+          <label class="col-sm-1 text-center" style="font-size:130%;">～</label>
           <input type="text" id="date_end" name="date_end" class="col-sm-3 form-control" value="{{ \App\HolidayApplication::parseDate($holidayData->holiday_date_to) }}" readonly/>
-          <input type="text" id="dateSpan" name="dateSpan" class="col-sm-2 ml-4 text-right form-control" readonly/>
+          <input type="text" id="total_days" name="total_days" class="col-sm-2 ml-4 text-right form-control" value="{{ $holidayData->total_days }}" readonly/>
           <label class="col-sm-1">日間</label>    
         </div>
         <div class="row mt-4">        
           <label class="col-sm-1 text-right">時間</label>
           <input type="text" id="time_start" name="time_start" class="col-sm-3 form-control" value="{{ \App\HolidayApplication::parseTime($holidayData->holiday_time_from) }}" readonly/>
-          <label class="col-sm-1 text-center"><font size="+1">～</font></label> 
+          <label class="col-sm-1 text-center" style="font-size:130%;">～</label> 
           <input type="text" id="time_end" name="time_end" class="col-sm-3 form-control" value="{{ \App\HolidayApplication::parseTime($holidayData->holiday_time_to) }}" readonly/>
           <input type="text" id="timeSpan" name="timeSpan" class="col-sm-2 ml-4 text-right form-control" readonly/>
           <label class="col-sm-1">時間</label>            

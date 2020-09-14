@@ -9,7 +9,6 @@ use Illuminate\Notifications\Notifiable;
 class User extends Authenticatable
 {
     use Notifiable;
-    protected $table = 'users';
 
     /**
      * The attributes that are mass assignable.
@@ -17,7 +16,9 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'user_name', 
+        'password',
+        'role_id',
     ];
 
     /**
@@ -34,11 +35,14 @@ class User extends Authenticatable
      *
      * @var array
      */
-    protected $casts = [
+    protected $casts = [ //casts は型の変換を行う
         'email_verified_at' => 'datetime',
     ];
-    public function holiday_applications(){
-        return $this->hasMany('App\HolidayApplication');
+    public function employee(){
+        return $this->belongsTo('App\Employees');
+    }
+    public function role(){
+        return $this->belongsTo('App\Roles');
     }
    
 }

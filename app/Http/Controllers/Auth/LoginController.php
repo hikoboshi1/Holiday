@@ -37,4 +37,8 @@ class LoginController extends Controller
     {
         $this->middleware('guest')->except('logout');
     }
+    //デフォルトでは、'e-mail'で判定しているところを、'user_name'に変更したので、オーバーライドする
+    public function username(){
+        return 'user_name';
+    }
 }

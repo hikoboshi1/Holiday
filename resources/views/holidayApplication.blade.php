@@ -1,9 +1,12 @@
 @extends('layouts.app')
 @section('content')
+<div class="container ">
 <div class="section-header">
     <h3>休暇届：新規</h3>
 </div>
-<div class="container ">
+<div class="text-right">
+  <button type="submit" class="btn btn-primary my-3" style="width:200px;">一覧へ戻る</button>
+</div>
   @if(count($errors) > 0)
     <div class="errormessagebox">
       <ul class="alert alert-danger">
@@ -13,7 +16,7 @@
       </ul>
     </div>
   @endif
-	<form action="{{ url('/new') }}" method="post">
+	<form action="{{ route('holiday_create') }}" method="post">
     <div class="card">
     	<div class="card-body">
         @csrf
@@ -25,22 +28,22 @@
             @endforeach 
           </select>
           <label class="col-sm-1 text-right">提出日</label>                
-					<input id="submit_date" name="submit_date" type="text" class="col-sm-3" value="{{ \Carbon\Carbon::now()->format('Y/m/d') }}" readonly/>
+					<input id="submit_datetime" name="submit_datetime" type="text" class="col-sm-3" value="{{ \Carbon\Carbon::now()->format('Y/m/d') }}" />
         </div>
         <div class="row mt-4">
           <label class="col-sm-1 text-right">期間</label>
-					<input id="date_from" name="date_from" type="text" class="col-sm-3" value="{{ old('date_from') }}" class="@error('date_from') is-invalid @enderror"/>
-          <label class="col-sm-1 text-center" ><font size="+1">～</font></label>
-          <input id="date_to" name="date_to" type="text" class="col-sm-3" value="{{ old('date_to') }}" class="@error('date_to') is-invalid @enderror"/>
-          <input id="date" name="date" type="text" class="col-sm-2 ml-4 text-right" value="{{ old('date') }}"/>
+					<input id="date_from" name="date_from" type="text" class="col-sm-3 calender @error('date_from') is-invalid @enderror" value="{{ old('date_from') }}"/>
+          <label class="col-sm-1 text-center" style="font-size:130%;">～</label>
+          <input id="date_to" name="date_to" type="text" class="col-sm-3 calender @error('date_to') is-invalid @enderror" value="{{ old('date_to') }}"/>
+          <input id="days" name="days" type="text" class="col-sm-2 ml-4 text-right" value="{{ old('days') }}" readonly/>
           <label class="col-sm-1">日間</label>
         </div>
         <div class="row mt-4">
           <label for="time" class="col-sm-1 text-right">時間</label>
-          <select id="time_from" name="time_from" class="col-sm-3" class="@error('time_from') is-invalid @enderror" data-old="{{ old('time_from') }}"><option placeholder=""></option></select>
-          <label class="col-sm-1 text-center"><font size="+1">～</font></label> 
-          <select id="time_to" name="time_to" class="col-sm-3" class="@error('time_to') is-invalid @enderror" data-old="{{ old('time_to') }}"><option placeholder="" ></option></select>
-          <input id="time" name="time" type="text" class="col-sm-2 ml-4" style="text-align:right" value="{{ old('time') }}"/>
+          <select id="time_from" name="time_from" class="col-sm-3 timepicker @error('time_from') is-invalid @enderror" data-old="{{ old('time_from') }}"><option placeholder=""></option></select>
+          <label class="col-sm-1 text-center" style="font-size:130%;">～</label> 
+          <select id="time_to" name="time_to" class="col-sm-3 timepicker @error('time_to') is-invalid @enderror" data-old="{{ old('time_to') }}"><option placeholder="" ></option></select>
+          <input id="time" name="time" type="text" class="col-sm-2 ml-4" style="text-align:right" value="{{ old('time') }}" readonly/>
           <label class="col-sm-1">時間</label>
         </div>
         <div class="row mt-4">

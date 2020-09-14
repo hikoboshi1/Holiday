@@ -27,7 +27,7 @@ class HolidayAppPostRequest extends FormRequest
     {
         return
         [    //
-            'submit_date'       => 'date_format:"Y/m/d"',
+            'submit_datetime'       => 'date_format:"Y/m/d"',
             'date_from'         => 'required|date|date_format:"Y/m/d"',
             'date_to'           => 'date_format:"Y/m/d"',
             'time_from'         => 'date_format:"H:i"',

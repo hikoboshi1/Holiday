@@ -9,12 +9,9 @@ class HolidayApplication extends Model
 {
     protected $table = 'holiday_applications';
     protected $dates = [
-        'submit_date',
+        'submit_datetime',
     ];
     //
-    public function user(){
-        return $this->belongsTo('App\User');
-    }
     public function holiday_type(){
         return $this->belongsTo('App\HolidayType');
     }

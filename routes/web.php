@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\HolidayApplicationController;
+use App\Http\Controllers\HolidayAppController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\HolidaySaveMiddleware;
 
@@ -23,11 +23,35 @@ Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
 
-Route::get('/new', 'HolidayAppController@create');//127.0.0.1:8000の後ろに、「/new」をつけるとHolidayAppControllerで示した先のページへ飛ぶ。という意味
-//Routeはルーティング、行先を示している
+//一覧へ
+Route::get('dcfportal/holiday_applications', 'HolidayAppController@index')->name('holiday_index');
 
-Route::post('/new', 'HolidayAppController@store')->name('store');//DBに登録
+//申請画面へ //第一引数が、127.0.0.1の後に続くURL。第二引数のクラス@メソッドの中の処理を実行
+Route::get('dcfportal/holiday_applications/new', 'HolidayAppController@create')->name('holiday_create');
 
-Route::get('/index', 'HolidayHomeController@index');//一覧画面移動
+//新規作成:DB登録
+Route::post('dcfportal/holiday_applications/new', 'HolidayAppController@store')->name('holiday_store');
 
-Route::get('/detail/{id}', 'HolidayDetailController@detail')->name('show');//詳細画面移動
+//合計期間の算出を行うAjax通信
+Route::get('dcfportal/get_holiday_duration', 'HolidayAppController@get_holiday_duration')->name('get_holiday_duration');
+
+//詳細へ
+Route::get('dcfportal/holiday_applications/{holidayApplication}/show', 'HolidayAppController@detail')->name('holiday_show');
+
+//修正画面
+Route::get('dcfportal/holiday_applications/{holidayApplication}/edit', 'HolidayAppController@edit')->name('holiday_edit');
+
+//更新
+Route::post('dcfportal/holiday_applications/{holidayApplication}/edit', 'HolidayAppController@update')->name('holiday_update');
+
+
+    //HOME
+    Route::get('admin/home', 'HomeController@admin_home')->name('admin_home');
+    //一覧
+    Route::get('dcfportal/admin/holiday_applications', 'HolidayAppController@admin_holiday_index')->name('admin_holiday_index');
+    //詳細
+    Route::get('dcfportal/admin/holiday_applications/{holidayApplication}/show', 'HolidayAppController@admin_holiday_show')->name('admin_holiday_show');
+    //確定
+    Route::put('dcfportal/admin/holiday_applications/{holidayApplication}/show', 'HolidayAppController@admin_holiday_confilm')->name('admin_holiday_confilm');
+    //確定取消
+    Route::put('dcfportal/admin/holiday_applications/{holidayApplication}/show', 'HolidayAppControkker@admin_holiday_reject')->name('admmin_holiday_reject');
