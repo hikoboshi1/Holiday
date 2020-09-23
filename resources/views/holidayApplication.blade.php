@@ -16,7 +16,7 @@
       </ul>
     </div>
   @endif
-	<form action="{{ route('holiday_create') }}" method="post">
+	<form action="{{ route('holiday_store') }}" method="post">
     <div class="card">
     	<div class="card-body">
         @csrf

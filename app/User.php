@@ -16,7 +16,8 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'user_name', 
+        'user_name',
+        'employee_id', 
         'password',
         'role_id',
     ];
@@ -35,9 +36,9 @@ class User extends Authenticatable
      *
      * @var array
      */
-    protected $casts = [ //casts は型の変換を行う
+    /*protected $casts = [ //casts は型の変換を行う
         'email_verified_at' => 'datetime',
-    ];
+    ];*/
     public function employee(){
         return $this->belongsTo('App\Employees');
     }

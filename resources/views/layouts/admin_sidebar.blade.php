@@ -11,7 +11,7 @@
       <div class="image">
       </div>
       <div class="info">
-        <a href="{{ url('/home') }}" class="d-block">{{ Auth::user()->user_name }}</a>
+        <a href="{{ url('admin/home') }}" class="d-block">{{ Auth::user()->user_name }}</a>
       </div>
     </div>
 
@@ -28,7 +28,7 @@
           </a>
           <ul class="nav nav-treeview">
             <li class="nav-item">
-              <a href="{{ url('/home') }}" class="nav-link ml-1">
+              <a href="{{ url('admin/home') }}" class="nav-link ml-1">
                 <i class="fas fa-home fa-lg"></i>
                 <p> トップ </p>
               </a>
@@ -53,7 +53,7 @@
               </a>
 						</li>				
 						<li class="nav-item">
-							<a href='#' class="nav-link ml-2">
+							<a href="{{ route('admin_holiday_index') }}" class="nav-link ml-2">
 								<i class="far fa-calender-alt fa-lg mr-2"></i>
 								<p> 休暇届一覧 </p>
 							</a>

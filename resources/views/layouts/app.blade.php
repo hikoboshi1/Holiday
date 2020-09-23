@@ -28,8 +28,11 @@
         <div class="wrapper">
             @include('layouts.header')
 
-
-            @include('layouts.sidebar')
+            @if(Auth::user()->role_id === 2)
+                @include('layouts.sidebar')
+            @else
+                @include('layouts.admin_sidebar')
+            @endif
 
             <section class="content">
                 <main class="py-4">

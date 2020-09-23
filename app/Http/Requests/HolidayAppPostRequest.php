@@ -28,12 +28,12 @@ class HolidayAppPostRequest extends FormRequest
         return
         [    //
             'submit_datetime'       => 'date_format:"Y/m/d"',
-            'date_from'         => 'required|date|date_format:"Y/m/d"',
-            'date_to'           => 'date_format:"Y/m/d"',
-            'time_from'         => 'date_format:"H:i"',
-            'time_to'           => 'date_format:"H:i"',
-            'reason'            => 'required|max:255',
-            'remarks'           => 'max:255',
+            'date_from'             => 'required|date|date_format:"Y/m/d"',
+            'date_to'               => 'date_format:"Y/m/d"',
+            'time_from'             => 'date_format:"H:i"',
+            'time_to'               => 'date_format:"H:i"',
+            'reason'                => 'required|max:255',
+            'remarks'               => 'max:255',
         ];
     }
     public function messages(){

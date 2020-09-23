@@ -26,7 +26,19 @@ class LoginController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = RouteServiceProvider::HOME;
+    //protected $redirectTo = RouteServiceProvider::HOME;
+
+    //userテーブルに登録している、role_idの値で遷移先を判定
+    public function redirectTo(){
+        $role = $this->guard()->user()->role_id;
+        
+        if($role === 2 ){
+            return '/home';
+        }
+        else{
+            return 'admin/home';
+        }
+    }
 
     /**
      * Create a new controller instance.

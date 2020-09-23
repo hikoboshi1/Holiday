@@ -31,11 +31,7 @@
 				@can('admin')
 				<div class="row mt-2">
 					<label class="col-sm-1 text-right mt-2">従業員</label>
-					<select name="employees" id="employees" class="form-control col-sm-7">
-						@foreach(\App\Employees::all() as $employee)
-						<option id="employee" name="employee" value="{{ $employee->id }}">{{ $employee->last_name }}{{ $employee->first_name }}</option>
-						@endforeach
-					</select>
+					<input type="text" name="employees" id="employees" class="form-control col-sm-7">
 				</div>
 				@endcan
 
@@ -58,6 +54,9 @@
 				<thead class="thead-light text-center">
 					<tr>	
 						<th scope="col" style="width:20%;">提出日</th>
+						@can('admin')
+						<th scope="col" style="width:20%;">従業員</th>
+						@endcan
 						<th scope="col" style="width:20%;">休暇種別</th>
 						<th scope="col" style="width:20%;">申請状況</th>
 						<th scope="col" style="width:20%;"></th>
@@ -67,6 +66,9 @@
 				@foreach($items as $item)
 					<tr class="text-center">
 						<td><span>{{ $item->submit_datetime->format('Y/m/d') }}</span></td>
+						@can('admin')
+						<td><span>{{ \App\Employees::IdToLastName($item->employee_id) . \App\Employees::IdToFirstName($item->employee_id) }}</span></td>
+						@endcan	
 						<td><span>{{ $item->holiday_type->holiday_type_name }}</span></td>
 						<td><span>{{ \App\ApplicationStatuses::IdToName($item->application_status_id) }}</span></td>
 						<td><a href="{{ route('holiday_show',['holidayApplication' => $item->id]) }}"><button type="submit" class="btn btn-primary" style="height:35px;" >詳細</button></a></td>

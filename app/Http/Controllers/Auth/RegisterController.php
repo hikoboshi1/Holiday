@@ -31,6 +31,17 @@ class RegisterController extends Controller
      */
     protected $redirectTo = RouteServiceProvider::HOME;
 
+    /*public function redirectTo(){
+        $role = $this->guard()->user()->role_id;
+
+        if($role === 2 ){
+            return '/home';
+        }
+        else{
+            return 'admin/home';
+        }
+    }*/
+
     /**
      * Create a new controller instance.
      *
@@ -50,8 +61,8 @@ class RegisterController extends Controller
     protected function validator(array $data)
     {
         return Validator::make($data, [
-            //'user_name' => ['required', 'string', 'max:255'],
-            'user_name' => ['required', 'string', 'max:255', 'unique:users'],
+            //'user_name' => ['required', 'string', 'max:255','unique:users'],
+            'user_name' => ['required', 'string', 'max:255'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
         ]);
     }
@@ -66,7 +77,7 @@ class RegisterController extends Controller
     {
         return User::create([
             'user_name' => $data['user_name'],
-            //'email' => $data['email'],
+            'employee_id' => $data['employee_id'],
             'password' => Hash::make($data['password']),
             'role_id' => $data['role_id'],
         ]);

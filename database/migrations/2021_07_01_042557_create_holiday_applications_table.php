@@ -15,11 +15,9 @@ class CreateHolidayApplicationsTable extends Migration
     {
         Schema::create('holiday_applications', function (Blueprint $table) {
             $table->bigIncrements('id')->length(5);
-            $table->unsignedInteger('employee_id')->length(5);
-            $table->foreign('employee_id')->references('id')->on('users');
+            $table->unsignedInteger('employee_id')->length(5)->foreign()->references('id')->on('users');
             $table->dateTime('submit_datetime');
-            $table->unsignedInteger('holiday_type_id')->length(2);
-            $table->foreign('holiday_type_id')->references('id')->on('holiday_types');
+            $table->unsignedInteger('holiday_type_id')->length(2)->foreign()->references('id')->on('holiday_types');
             $table->date('holiday_date_from');
             $table->date('holiday_date_to')->nullable();
             $table->double('total_days')->length(2);

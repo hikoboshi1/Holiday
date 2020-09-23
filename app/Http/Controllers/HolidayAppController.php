@@ -4,12 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\HolidayAppPostRequest;
 use App\HolidayApplication;
+use DB;
 use App\Http\Requests\SearchIndexReq;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 
 class HolidayAppController extends Controller
 {
+    
     //申請画面
     public function create()
     {
@@ -53,9 +55,13 @@ class HolidayAppController extends Controller
     public function userSearch(SearchIndexReq $req)
     {
         $query = HolidayApplication::query();
-        
+        $query->join('employees', function ($query){
+            $query->on('employees.id', '=', 'employee_id');
+        });
+ 
         $status = $req->input('statuses');
         $type = $req->input('types');
+        $employee = $req->input('employees');
         $from = $req->input('submit_from');
         $to = $req->input('submit_to');
 
@@ -67,12 +73,21 @@ class HolidayAppController extends Controller
         $query->when($type !== null, function ($query) use ($type){
             return $query->where('holiday_type_id', $type);
         });
+        //検索:従業員名　完全一致
+        $query->when($employee !== null, function ($query) use ($employee){
+            return $query->where(DB::raw('CONCAT(last_name, first_name)') , 'like',  '%'.$employee.'%');
+        });
         //検索:提出期間指定があれば、その範囲に絞る
         if(!empty($from) && !empty($to)){
             return $query->whereBetween('submit_datetime',[$req->submit_from , $req->submit_to])->get();
         }
-        //ログインしているユーザーと一致しているレコードを取得
-        $index = $query->where('employee_id', '=', Auth::user()->id)->get();
+        //従業員ログイン→ログインユーザーと一致しているレコードを取得
+        //管理者ログイン→全従業員レコードを取得
+        if (Auth::user()->role_id === 2) {
+            $index = $query->where('employee_id', '=', Auth::user()->id)->get();
+        }else{
+            $index = $query->get();
+        }
         return $index;
     }
     //一般:一覧　検索
@@ -81,44 +96,6 @@ class HolidayAppController extends Controller
         $items = $this->userSearch($req);
         return view('holidayHome', compact('items'));
     }
-    //一般:一覧 検索条件
-    public function adminSearch(SearchIndexReq $req)
-    {
-        $query = HolidayApplication::query();
-            
-        $status = $req->input('statuses');
-        $type = $req->input('types');
-        $from = $req->input('submit_from');
-        $to = $req->input('submit_to');
-    
-        //検索:処理状況
-        $query->when($status !== null, function($query) use ($status){
-            return $query->where('application_status_id', $status);
-        });
-        //検索:種別
-        $query->when($type !== null, function ($query) use ($type){
-            return $query->where('holiday_type_id', $type);
-        });
-        //検索:提出期間指定があれば、その範囲に絞る
-        if(!empty($from) && !empty($to)){
-            return $query->whereBetween('submit_datetime',[$req->submit_from , $req->submit_to])->get();
-        }
-        //ログインしているユーザーと一致しているレコードを取得
-        $index = $query->where('employee_id', '=', Auth::user()->id)->get();
-        return $index;
-    }
-    //一般:一覧　検索
-    public function admin_holiday_index(SearchIndexReq $req)
-    {
-        $items = $this->adminSearch($req);
-        return view('holidayHome', compact('items'));
-    }
-    
-
-  /*  管理者:一覧
-    public function admin_holiday_index(){
-        return 'index';
-    }*/
 
     //管理者:詳細
     public function admin_holiday_show(){

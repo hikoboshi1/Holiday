@@ -32,6 +32,6 @@ class HomeController extends Controller
      */
     public function admin_home()
     {
-      return 'admin_home';
+      return view('home');
     }
 }

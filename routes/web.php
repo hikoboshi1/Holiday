@@ -44,14 +44,17 @@ Route::get('dcfportal/holiday_applications/{holidayApplication}/edit', 'HolidayA
 //更新
 Route::post('dcfportal/holiday_applications/{holidayApplication}/edit', 'HolidayAppController@update')->name('holiday_update');
 
-
+//roleが管理者で登録されている者のみアクセス許可
+Route::group(['middleware' => ['auth','can:admin']], function(){
     //HOME
     Route::get('admin/home', 'HomeController@admin_home')->name('admin_home');
     //一覧
-    Route::get('dcfportal/admin/holiday_applications', 'HolidayAppController@admin_holiday_index')->name('admin_holiday_index');
+    Route::get('dcfportal/admin/holiday_applications', 'HolidayAppController@index')->name('admin_holiday_index');
     //詳細
     Route::get('dcfportal/admin/holiday_applications/{holidayApplication}/show', 'HolidayAppController@admin_holiday_show')->name('admin_holiday_show');
     //確定
     Route::put('dcfportal/admin/holiday_applications/{holidayApplication}/show', 'HolidayAppController@admin_holiday_confilm')->name('admin_holiday_confilm');
     //確定取消
     Route::put('dcfportal/admin/holiday_applications/{holidayApplication}/show', 'HolidayAppControkker@admin_holiday_reject')->name('admmin_holiday_reject');
+    
+});

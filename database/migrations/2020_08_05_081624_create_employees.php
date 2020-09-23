@@ -15,7 +15,7 @@ class CreateEmployees extends Migration
     {
         Schema::create('employees', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->unsignedInteger('user_id')->length(5)->foreign()->references('id')->on('users');
+            //$table->unsignedInteger('user_id')->length(5)->foreign()->references('id')->on('users');
             $table->unsignedInteger('post_id')->length(2)->foreign()->references('id')->on('posts');
             $table->unsignedInteger('department_id')->length(2)->foreign()->references('id')->on('departments');
             $table->string('last_name',20);
