@@ -28,14 +28,14 @@
             @endforeach 
           </select>
           <label class="col-sm-1 text-right">提出日</label>                
-					<input id="submit_datetime" name="submit_datetime" type="text" class="col-sm-3" value="{{ \Carbon\Carbon::now()->format('Y/m/d') }}" />
+					<input id="submit_datetime" name="submit_datetime" type="text" class="col-sm-3" value="{{ \Carbon\Carbon::now()->format('Y/m/d') }}" readonly/>
         </div>
         <div class="row mt-4">
           <label class="col-sm-1 text-right">期間</label>
-					<input id="date_from" name="date_from" type="text" class="col-sm-3 calender @error('date_from') is-invalid @enderror" value="{{ old('date_from') }}"/>
+					<input id="date_from" name="date_from" type="text" class="col-sm-3 calendar @error('date_from') is-invalid @enderror" value="{{ old('date_from') }}"/>
           <label class="col-sm-1 text-center" style="font-size:130%;">～</label>
-          <input id="date_to" name="date_to" type="text" class="col-sm-3 calender @error('date_to') is-invalid @enderror" value="{{ old('date_to') }}"/>
-          <input id="days" name="days" type="text" class="col-sm-2 ml-4 text-right" value="{{ old('days') }}" readonly/>
+          <input id="date_to" name="date_to" type="text" class="col-sm-3 calendar @error('date_to') is-invalid @enderror" value="{{ old('date_to') }}"/>
+          <input id="total_days" name="total_days" type="text" class="col-sm-2 ml-4 text-right" value="{{ old('total_days') }}" readonly/>
           <label class="col-sm-1">日間</label>
         </div>
         <div class="row mt-4">

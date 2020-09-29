@@ -27,18 +27,18 @@
 
         <div class="row mt-4">      
           <label class="col-sm-1 text-right">期間</label>
-          <input type="text" id="date_start" name="date_start" class="col-sm-3 form-control" value="{{ \App\HolidayApplication::parseDate($holidayData->holiday_date_from) }}" readonly/>
+          <input type="text" id="date_from" name="date_from" class="col-sm-3 form-control" value="{{ \App\HolidayApplication::parseDate($holidayData->holiday_date_from) }}" readonly/>
           <label class="col-sm-1 text-center" style="font-size:130%;">～</label>
-          <input type="text" id="date_end" name="date_end" class="col-sm-3 form-control" value="{{ \App\HolidayApplication::parseDate($holidayData->holiday_date_to) }}" readonly/>
+          <input type="text" id="date_to" name="date_to" class="col-sm-3 form-control" value="{{ \App\HolidayApplication::parseDate($holidayData->holiday_date_to) }}" readonly/>
           <input type="text" id="total_days" name="total_days" class="col-sm-2 ml-4 text-right form-control" value="{{ $holidayData->total_days }}" readonly/>
           <label class="col-sm-1">日間</label>    
         </div>
         <div class="row mt-4">        
           <label class="col-sm-1 text-right">時間</label>
-          <input type="text" id="time_start" name="time_start" class="col-sm-3 form-control" value="{{ \App\HolidayApplication::parseTime($holidayData->holiday_time_from) }}" readonly/>
+          <input type="text" id="time_from" name="time_from" class="col-sm-3 form-control" value="{{ \App\HolidayApplication::parseTime($holidayData->holiday_time_from) }}" readonly/>
           <label class="col-sm-1 text-center" style="font-size:130%;">～</label> 
-          <input type="text" id="time_end" name="time_end" class="col-sm-3 form-control" value="{{ \App\HolidayApplication::parseTime($holidayData->holiday_time_to) }}" readonly/>
-          <input type="text" id="timeSpan" name="timeSpan" class="col-sm-2 ml-4 text-right form-control" readonly/>
+          <input type="text" id="time_to" name="time_to" class="col-sm-3 form-control" value="{{ \App\HolidayApplication::parseTime($holidayData->holiday_time_to) }}" readonly/>
+          <input type="text" id="time" name="time" class="col-sm-2 ml-4 text-right form-control" readonly/>
           <label class="col-sm-1">時間</label>            
         </div>
         <div class="row mt-4">        

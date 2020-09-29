@@ -64,7 +64,7 @@ const dateAndTime = () => {
     if ($('#types option:selected').data("code") == 'half') {　//option:selected data属性の選択
         $('#date_to').prop('disabled', true);
         $('#date_to').val(null);
-        $('#days').val(0.5);
+        $('#total_days').val(0.5);
         $('.timepicker').prop('disabled', false);
         $('#time').prop('disabled', false);
         totalBusinessHours();
@@ -72,7 +72,7 @@ const dateAndTime = () => {
     }
     else {
         $('#date_to').prop('disabled', false);
-        $('#days').val(null);
+        $('#total_days').val(null);
         $('.timepicker').prop('disabled', true);
         $('.timepicker').val(null);
         $('#time').prop('disabled', true);
@@ -81,10 +81,15 @@ const dateAndTime = () => {
 
     }
 }
+const time = () => {
+    if ($('#time_from').val() != '' && $('#time_to').val() != '') {
+        $('#time').val()(totalBusinessHours($('#time_from').val(), $('#time_to').val()));
+    }
+}
 //画面遷移時
 $(document).ready(function () {
     dateAndTime();
-
+    time();
     //時間の取得
     myTimePicker.initTime($('#time_from'), '09:00', '18:00', 15); 
     myTimePicker.initTime($('#time_to'), '09:00', '18:00', 15);
@@ -95,31 +100,26 @@ $(document).ready(function () {
     });
     $('#time_to').datepicker({
         format:'H:i',
-    });
-
-    //詳細:半休時、合計時間取得
-    if ($('#time_start').val() != '' && $('#time_end').val() != '') {
-        $('#time').val(totalBussinessHours($('#time_start').val(), $('#time_end').val()));
-    };
-    
+    });    
 });
 $(function () {
     //種別変更時
     $('#types').on('change', function () {      
         dateAndTime();
-        clear();
+        
     });
 
     //カレンダー追加と土日の非活性
-    $('#date_from').datepicker({ 
+    $('#date_from').datepicker({
         beforeShowDay: function (date) {
             if (date.getDay() == 0 || date.getDay() == 6) {
                 return [false, 'ui-state-disabled'];
             }else {
                 return [true, ''];
             }
-        }      
-    });  
+        }
+    });
+    
     $('#date_to').datepicker({
         beforeShowDay: function (date) {
             if (date.getDay() == 0 || date.getDay() == 6) {
@@ -152,16 +152,16 @@ $(function () {
     //日数計算
     $('#date_from').on('change', function () {
         if ($('#date_from').val() != '' && $('#date_to').val() != '') {
-            $('#days').val(getBussinessDays($('#date_from').val(), $('#date_to').val()));
+            $('#total_days').val(getBussinessDays($('#date_from').val(), $('#date_to').val()));
         }
     });   
     $('#date_to').on('change', function () {
         if ($('#date_from').val() != '' && $('#date_to').val() != '') {
-            $('#days').val(getBussinessDays($('#date_from').val(), $('#date_to').val()));
+            $('#total_days').val(getBussinessDays($('#date_from').val(), $('#date_to').val()));
         }
     });    
 
     
-    $('.calender').on('dp.change', function () { totalBusinessDays() });
+    $('.calendar').on('dp.change', function () { totalBusinessDays() });
     $('.timepicker').on('change', function () { totalBusinessHours() });
 })

@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\HolidayAppPostRequest;
 use App\HolidayApplication;
-use DB;
+use App\Employees;
 use App\Http\Requests\SearchIndexReq;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
@@ -31,7 +31,7 @@ class HolidayAppController extends Controller
         if($params['types'] != '2'){
             $holidayApp->holiday_date_to = $params['date_to'];
         }
-        $holidayApp->total_days = $params['days'];
+        $holidayApp->total_days = $params['total_days'];
         if($params['types'] == '2'){
             $holidayApp->holiday_time_from = $params['time_from'];
             $holidayApp->holiday_time_to = $params['time_to'];
@@ -44,26 +44,22 @@ class HolidayAppController extends Controller
         return redirect('dcfportal/holiday_applications');       
     }
 
-    //詳細画面
-    public function detail($holidayApplication)
-    {
-       $holidayData = HolidayApplication::find($holidayApplication);
-       return view('holidayDetail')->with('holidayData',$holidayData);
-    }
-
     //一般:一覧 検索条件
     public function userSearch(SearchIndexReq $req)
     {
         $query = HolidayApplication::query();
-        $query->join('employees', function ($query){
-            $query->on('employees.id', '=', 'employee_id');
-        });
- 
-        $status = $req->input('statuses');
-        $type = $req->input('types');
-        $employee = $req->input('employees');
+
+        //悪意を持って、アドレスバーに employee=名前 を入力したときに検索されてしまう 
+        $status = $req->input('status');
+        $type = $req->input('type');
+        $employeeName = $req->input('employee');
         $from = $req->input('submit_from');
         $to = $req->input('submit_to');
+
+        $employees = Employees::whereConcat($employeeName)->get();
+        $employeeIds = $employees->map(function($employee){
+            return $employee->id;
+        });
 
         //検索:処理状況
         $query->when($status !== null, function($query) use ($status){
@@ -73,10 +69,13 @@ class HolidayAppController extends Controller
         $query->when($type !== null, function ($query) use ($type){
             return $query->where('holiday_type_id', $type);
         });
-        //検索:従業員名　完全一致
-        $query->when($employee !== null, function ($query) use ($employee){
-            return $query->where(DB::raw('CONCAT(last_name, first_name)') , 'like',  '%'.$employee.'%');
-        });
+        //検索:従業員名　完全一致 ifでパラメータ入力検索できなくする
+        if(Auth::user()->role_id === 1){
+            $query->when($employeeName !== null, function ($query) use ($employeeIds) {
+                return $query->whereIn('employee_id', $employeeIds);
+            });
+        }
+
         //検索:提出期間指定があれば、その範囲に絞る
         if(!empty($from) && !empty($to)){
             return $query->whereBetween('submit_datetime',[$req->submit_from , $req->submit_to])->get();
@@ -90,12 +89,20 @@ class HolidayAppController extends Controller
         }
         return $index;
     }
-    //一般:一覧　検索
+    //一般:検索
     public function index(SearchIndexReq $req)
     {
-        $items = $this->userSearch($req);
-        return view('holidayHome', compact('items'));
+        $holidayApplications = $this->userSearch($req);
+        return view('holidayHome', compact('holidayApplications'));
     }
+   
+    //詳細画面
+    public function detail(HolidayApplication $holidayApplication)
+    {
+        // $holidayData = HolidayApplication::find($holidayApplication);
+        return view('holidayDetail')->with('holidayData',$holidayApplication);
+    }
+ 
 
     //管理者:詳細
     public function admin_holiday_show(){

@@ -15,6 +15,7 @@ class HolidayApplication extends Model
     public function holiday_type(){
         return $this->belongsTo('App\HolidayType');
     }
+
     public static function parseDate($value){
         if ($value != null) {
             return Carbon::parse($value)->format("Y/m/d");
