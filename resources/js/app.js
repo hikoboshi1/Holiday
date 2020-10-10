@@ -6,9 +6,13 @@
 
 
 require('./bootstrap');
+require('./dataTables');
+require('./editAndDelete');
 require('./holidayApplication');
 require('./my-timepicker');
+require('./yasumi');
 require('admin-lte/dist/js/adminlte'); //npmでインストールしたものを読み込む　これをしないとサイドバー動かなかった
+require('datatables.net-dt/js/dataTables.dataTables');
 
 window.Vue = require('vue');
 

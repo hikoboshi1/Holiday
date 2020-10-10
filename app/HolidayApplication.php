@@ -12,8 +12,16 @@ class HolidayApplication extends Model
         'submit_datetime',
     ];
     //
+    public function employee(){
+        return $this->belongsTo('App\Employees');
+    }
+
     public function holiday_type(){
         return $this->belongsTo('App\HolidayType');
+    }
+
+    public function application_status(){
+        return $this->belongsTo('App\ApplicationStatuses');
     }
 
     public static function parseDate($value){

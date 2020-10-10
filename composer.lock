@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2232ebf6e19fc9f742ac1756ec3c151b",
+    "content-hash": "233ac7463a1282dbde8a0534ecb52fd6",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -60,27 +60,27 @@
         },
         {
             "name": "azuyalabs/yasumi",
-            "version": "2.2.0",
+            "version": "2.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/azuyalabs/yasumi.git",
-                "reference": "87cde7fd22e3e6e3ace9830b145b6a77338757e6"
+                "reference": "e2f37e6de3b15642b83275a24bbfe101cd5c7791"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/azuyalabs/yasumi/zipball/87cde7fd22e3e6e3ace9830b145b6a77338757e6",
-                "reference": "87cde7fd22e3e6e3ace9830b145b6a77338757e6",
+                "url": "https://api.github.com/repos/azuyalabs/yasumi/zipball/e2f37e6de3b15642b83275a24bbfe101cd5c7791",
+                "reference": "e2f37e6de3b15642b83275a24bbfe101cd5c7791",
                 "shasum": ""
             },
             "require": {
                 "ext-json": "*",
-                "php": ">=7.1"
+                "php": ">=7.2"
             },
             "require-dev": {
-                "friendsofphp/php-cs-fixer": "^2.14",
-                "fzaninotto/faker": "~1.8",
-                "mikey179/vfsstream": "~1.6",
-                "phpunit/phpunit": "~8.4"
+                "friendsofphp/php-cs-fixer": "^2.16",
+                "fzaninotto/faker": "^1.9",
+                "mikey179/vfsstream": "^1.6",
+                "phpunit/phpunit": "^8.5"
             },
             "suggest": {
                 "ext-calendar": "For calculating the date of Easter"
@@ -98,10 +98,12 @@
             "authors": [
                 {
                     "name": "Sacha Telgenhof",
-                    "email": "me@sachatelgenhof.com"
+                    "email": "me@sachatelgenhof.com",
+                    "role": "Maintainer"
                 }
             ],
-            "description": "Yasumi is an easy PHP Library for calculating national holidays.",
+            "description": "The easy PHP Library for calculating holidays.",
+            "homepage": "https://www.yasumi.dev",
             "keywords": [
                 "Bank",
                 "calculation",
@@ -113,7 +115,13 @@
                 "national",
                 "time"
             ],
-            "time": "2019-10-06T03:09:18+00:00"
+            "funding": [
+                {
+                    "url": "https://www.buymeacoffee.com/sachatelgenhof",
+                    "type": "other"
+                }
+            ],
+            "time": "2020-06-22T12:46:20+00:00"
         },
         {
             "name": "brick/math",

@@ -33,13 +33,16 @@ Route::get('dcfportal/holiday_applications/new', 'HolidayAppController@create')-
 Route::post('dcfportal/holiday_applications/new', 'HolidayAppController@store')->name('holiday_store');
 
 //合計期間の算出を行うAjax通信
-Route::get('dcfportal/get_holiday_duration', 'HolidayAppController@get_holiday_duration')->name('get_holiday_duration');
+Route::get('dcfportal/get_holiday_duration', 'HolidayAppController@duration');
 
 //詳細へ
 Route::get('dcfportal/holiday_applications/{holidayApplication}/show', 'HolidayAppController@detail')->name('holiday_show');
 
 //修正画面
 Route::get('dcfportal/holiday_applications/{holidayApplication}/edit', 'HolidayAppController@edit')->name('holiday_edit');
+
+//削除
+Route::post('dcfportal/holiday_applications/{holidayApplication}/delete', 'HolidayAppController@delete')->name('holiday_delete');
 
 //更新
 Route::post('dcfportal/holiday_applications/{holidayApplication}/edit', 'HolidayAppController@update')->name('holiday_update');

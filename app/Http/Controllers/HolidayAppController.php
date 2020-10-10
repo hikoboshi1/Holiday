@@ -4,95 +4,69 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\HolidayAppPostRequest;
 use App\HolidayApplication;
-use App\Employees;
 use App\Http\Requests\SearchIndexReq;
 use Illuminate\Support\Facades\Auth;
-use Carbon\Carbon;
+use App\Services\HolidayAppService;
+use App\Services\HolidaySpanService;
+use illuminate\Http\Request;
 
 class HolidayAppController extends Controller
 {
-    
-    //申請画面
-    public function create()
+    protected $holidayAppService;
+    protected $holidaySpanService;
+
+    public function __construct(HolidayAppService $holidayAppService, HolidaySpanService $holidaySpanService)
     {
-        return view('holidayApplication');
+        $this->holidayAppService = $holidayAppService;
+        $this->holidaySpanService = $holidaySpanService;
+    }
+
+    //申請画面
+    public function create(Holidayapplication $holidayApplication)
+    {
+        $mode = 'new';
+        return view('holidayApplication', compact('holidayApplication', 'mode'));
     }
 
     //新規申請
     public function store(HolidayAppPostRequest $req)
     {
-        $holidayApp = new HolidayApplication();
         $params = $req->all();
-        
-        $holidayApp->employee_id = Auth::id();
-        $holidayApp->submit_datetime = Carbon::now();
-        $holidayApp->holiday_type_id = $params['types'];
-        $holidayApp->holiday_date_from = $params['date_from'];
-        if($params['types'] != '2'){
-            $holidayApp->holiday_date_to = $params['date_to'];
-        }
-        $holidayApp->total_days = $params['total_days'];
-        if($params['types'] == '2'){
-            $holidayApp->holiday_time_from = $params['time_from'];
-            $holidayApp->holiday_time_to = $params['time_to'];
-        }
-        $holidayApp->reason = $params['reason'];
-        $holidayApp->remarks = $params['remarks'];
-        $holidayApp->application_status_id = $holidayApp->application_status_id ?? 1;
-        $holidayApp->save();
+        $this->holidayAppService->storeHoliday($params);
         
         return redirect('dcfportal/holiday_applications');       
     }
 
-    //一般:一覧 検索条件
-    public function userSearch(SearchIndexReq $req)
-    {
-        $query = HolidayApplication::query();
-
-        //悪意を持って、アドレスバーに employee=名前 を入力したときに検索されてしまう 
-        $status = $req->input('status');
-        $type = $req->input('type');
-        $employeeName = $req->input('employee');
-        $from = $req->input('submit_from');
-        $to = $req->input('submit_to');
-
-        $employees = Employees::whereConcat($employeeName)->get();
-        $employeeIds = $employees->map(function($employee){
-            return $employee->id;
-        });
-
-        //検索:処理状況
-        $query->when($status !== null, function($query) use ($status){
-            return $query->where('application_status_id', $status);
-        });
-        //検索:種別
-        $query->when($type !== null, function ($query) use ($type){
-            return $query->where('holiday_type_id', $type);
-        });
-        //検索:従業員名　完全一致 ifでパラメータ入力検索できなくする
-        if(Auth::user()->role_id === 1){
-            $query->when($employeeName !== null, function ($query) use ($employeeIds) {
-                return $query->whereIn('employee_id', $employeeIds);
-            });
-        }
-
-        //検索:提出期間指定があれば、その範囲に絞る
-        if(!empty($from) && !empty($to)){
-            return $query->whereBetween('submit_datetime',[$req->submit_from , $req->submit_to])->get();
-        }
-        //従業員ログイン→ログインユーザーと一致しているレコードを取得
-        //管理者ログイン→全従業員レコードを取得
-        if (Auth::user()->role_id === 2) {
-            $index = $query->where('employee_id', '=', Auth::user()->id)->get();
-        }else{
-            $index = $query->get();
-        }
-        return $index;
-    }
-    //一般:検索
+    //一般 & 管理者:一覧
     public function index(SearchIndexReq $req)
     {
-        $holidayApplications = $this->userSearch($req);
+        $reqUrl = $req->fullUrl();
+        $req->session()->put('indexUrl', $reqUrl);
+        $holidayApplications = $this->holidayAppService->searchIndex($req);
+        
+        $holidayApplications->transform(function ($holidayApplication){
+            if (Auth::user()->role->role_code === 'user') {
+                return [
+                    $holidayApplication->submit_datetime->format('yy-m-d'),
+                    $holidayApplication->holiday_type->holiday_type_name,
+                    $holidayApplication->holiday_date_from,
+                    $holidayApplication->application_status->application_status_name,
+                    route('holiday_show', $holidayApplication->id),
+                ];
+            }
+            else{
+                return[
+                    $holidayApplication->submit_datetime->format('yy-m-d'),
+                    $holidayApplication->employee->last_name . $holidayApplication->employee->first_name,
+                    $holidayApplication->holiday_type->holiday_type_name,
+                    $holidayApplication->holiday_date_from,
+                    $holidayApplication->application_status->application_status_name,
+                    route('holiday_show', $holidayApplication->id),
+                ];
+            }
+        });
+        $holidayApplications = json_encode($holidayApplications);
+       
         return view('holidayHome', compact('holidayApplications'));
     }
    
@@ -100,22 +74,43 @@ class HolidayAppController extends Controller
     public function detail(HolidayApplication $holidayApplication)
     {
         // $holidayData = HolidayApplication::find($holidayApplication);
-        return view('holidayDetail')->with('holidayData',$holidayApplication);
-    }
- 
-
-    //管理者:詳細
-    public function admin_holiday_show(){
-        return 'show';
+        return view('holidayDetail',compact('holidayApplication'));
     }
 
-    //管理者:確定
-    public function admin_holiday_confilm(){
-        return 'confilm';
+    //休暇申請削除
+    public function delete(HolidayApplication $holidayApplication)
+    {
+        //詳細を見てるholidayApplicationインスタンスのidを取得
+        $params = $holidayApplication->id;
+        $employeeId = $holidayApplication->employee_id;
+        //一致してたら削除
+        
+        if (Auth::user()->employee_id == $employeeId) { //うまくいっていない
+            HolidayApplication::where('id', $params)->delete();
+        }else{
+            abort(403);
+        }
+        return redirect('dcfportal/holiday_applications');
     }
 
-    //管理者:確定取消
-    public function admin_holiday_reject(){
-        return 'reject';
+    //修正画面
+    public function edit(HolidayApplication $holidayApplication)
+    {
+        
+        $employeeId = $holidayApplication->employee_id;
+        $mode = 'edit';
+        if (Auth::user()->employee_id == $employeeId) { //うまくいっていない
+            return view('holidayApplication', compact('holidayApplication', 'mode'));
+        }else{
+            abort(403);
+        }
+    }
+
+    //Ajaxで合計日数を返す
+    public function duration(Request $req){
+        $from = $req->all();
+        $to = $req->all();
+        $days = $this->holidaySpanService->getDuration($from, $to);
+        return $days;
     }
 }

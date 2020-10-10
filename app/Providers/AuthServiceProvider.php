@@ -30,11 +30,11 @@ class AuthServiceProvider extends ServiceProvider
         
         //管理者のみ許可
         Gate::define('admin', function($user){
-            return $user->role_id == 1;
+            return $user->role->role_code == 'admin';
         });
         //全ユーザーを許可
         Gate::define('all_user', function($user){
-            return $user->role_id > 0;
+            return $user->role->role_code == 'admin' || 'user';
         });
        
     }

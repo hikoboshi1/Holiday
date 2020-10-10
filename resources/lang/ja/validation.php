@@ -155,12 +155,13 @@ return [
     */
 
     'attributes' => [
-        'date_from' => '休暇開始日',
-        'date_to'   => '休暇終了日',
-        'time_from' => '休暇開始時刻',
-        'time_to'   => '休暇終了時刻',
-        'reason'    => '理由',
-        'remarks'   => '備考',
+        'submit_datetime'   =>'提出日',
+        'holiday_date_from' => '休暇開始日',
+        'holiday_date_to'   => '休暇終了日',
+        'time_from'         => '休暇開始時刻',
+        'time_to'           => '休暇終了時刻',
+        'reason'            => '理由',
+        'remarks'           => '備考',
     ],
 
 ];
